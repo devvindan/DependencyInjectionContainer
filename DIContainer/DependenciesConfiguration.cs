@@ -12,13 +12,13 @@ namespace DIContainer
         // Defining configuration structures
 
         // Bool value is true if object lifetime type is Singletone
-        Dictionary<Type, bool> lifetimeSettings;
+        public Dictionary<Type, bool> lifetimeSettings;
 
         // Dictionary to story created objects for sigletone types
-        Dictionary<Type, Object> objectContainer;
+        public Dictionary<Type, Object> objectContainer;
 
         // Dictionary to map Abstracy Dependency to Concrete Implementation(s)
-        Dictionary<Type, List<Type>> dependenciesContainer;
+        public Dictionary<Type, List<Type>> dependenciesContainer;
 
         public void Register<TDependency, TImplementation>()
         {

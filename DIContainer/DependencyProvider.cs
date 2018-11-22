@@ -11,11 +11,36 @@ namespace DIContainer
 
         DependenciesConfiguration configuration;
 
-        public bool validateConfiguration(DependenciesConfiguration configuration)
+        public void validateConfiguration(DependenciesConfiguration configuration)
         {
+            // Iterate over registered dependencies
+            foreach(Type tDependency in configuration.dependenciesContainer.Keys)
+            {
 
-            // Need to check if TImplementation type is abstract.
-            // if types are equal, IsSubclassOf doesnt work 
+                // Checks if TDependency is a reference type
+                if (tDependency.IsValueType)
+                {
+                    throw new ArgumentException("TDependency must be a reference type");
+                }
+
+                // Iterate over registred dependency implementations
+                foreach(Type tImplementation in configuration.dependenciesContainer[tDependency])
+                {
+                    // Checks if TImplementation inherits from/implements TDependency
+                    if (!tDependency.IsAssignableFrom(tImplementation))
+                    {
+                        throw new ArgumentException("TImplementation must be inherited from/implement Dependency type.");
+                    }
+
+                    // Checks if TImplementation is a not abstract class
+                    if (tImplementation.IsAbstract || !tImplementation.IsClass)
+                    {
+                        throw new ArgumentException("TImplementation must be a non-abstract class");
+                    }
+
+                }
+            }
+            
 
 
             throw new NotImplementedException();
