@@ -11,12 +11,17 @@ namespace DIContainer
 
         DependenciesConfiguration configuration;
 
+        public DependencyProvider(DependenciesConfiguration configuration)
+        {
+            validateConfiguration(configuration);
+            this.configuration = configuration;         
+        }
+
         public void validateConfiguration(DependenciesConfiguration configuration)
         {
             // Iterate over registered dependencies
-            foreach(Type tDependency in configuration.dependenciesContainer.Keys)
+            foreach (Type tDependency in configuration.dependenciesContainer.Keys)
             {
-
                 // Checks if TDependency is a reference type
                 if (tDependency.IsValueType)
                 {
@@ -24,7 +29,7 @@ namespace DIContainer
                 }
 
                 // Iterate over registred dependency implementations
-                foreach(Type tImplementation in configuration.dependenciesContainer[tDependency])
+                foreach (Type tImplementation in configuration.dependenciesContainer[tDependency])
                 {
                     // Checks if TImplementation inherits from/implements TDependency
                     if (!tDependency.IsAssignableFrom(tImplementation))
@@ -37,27 +42,10 @@ namespace DIContainer
                     {
                         throw new ArgumentException("TImplementation must be a non-abstract class");
                     }
-
                 }
             }
-            
-
-
-            throw new NotImplementedException();
         }
 
-
-        public DependencyProvider(DependenciesConfiguration configuration)
-        {
-            if (validateConfiguration(configuration))
-            {
-                this.configuration = configuration;
-            } else
-            {
-                throw new ArgumentException("Invalid dependencies configuration.");
-            }
-            
-        }
 
         public TImplementation Resolve<TImplementation>()
         {
