@@ -9,17 +9,25 @@ namespace DIContainer
     public class DependenciesConfiguration
     {
 
-        public DependenciesConfiguration()
-        {
+        // Defining configuration structures
 
-        }
+        // Bool value is true if object lifetime type is Singletone
+        Dictionary<Type, bool> lifetimeSettings;
+
+        // Dictionary to story created objects for sigletone types
+        Dictionary<Type, Object> objectContainer;
+
+        // Dictionary to map Abstracy Dependency to Concrete Implementation(s)
+        Dictionary<Type, List<Type>> dependenciesContainer;
 
         public void Register<TDependency, TImplementation>()
         {
             Type dependencyType = typeof(TDependency);
             Type implementationType = typeof(TImplementation);
+
+
             
-            // Need to check if TImplementation type is abstract.
+
 
             // Need to check for recursive creation.
 
@@ -30,6 +38,13 @@ namespace DIContainer
 
             throw new NotImplementedException();
         }
+
+        public void Register(Type tDependancy, Type tImplementation)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
     }
 }
