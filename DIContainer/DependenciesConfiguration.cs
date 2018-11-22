@@ -20,28 +20,48 @@ namespace DIContainer
         // Dictionary to map Abstracy Dependency to Concrete Implementation(s)
         public Dictionary<Type, List<Type>> dependenciesContainer;
 
-        public void Register<TDependency, TImplementation>()
+
+        public void Register<TDependency, TImplementation>(bool isSingleton)
         {
-            Type dependencyType = typeof(TDependency);
-            Type implementationType = typeof(TImplementation);
+            Type tDependency = typeof(TDependency);
+            Type tImplementation = typeof(TImplementation);
 
+            // Register dependency in a dictionary
+            if (!dependenciesContainer.ContainsKey(tDependency))
+            {
+                dependenciesContainer[tDependency] = new List<Type>();
+                dependenciesContainer[tDependency].Add(tImplementation);
+            } else
+            {
+                // Implementations in array must be unique
+                if (!dependenciesContainer[tDependency].Contains(tImplementation))
+                {
+                    dependenciesContainer[tDependency].Add(tImplementation);
+                }
+            }
 
-            
+            // Register type lifetime settings
+            lifetimeSettings[tImplementation] = isSingleton;
 
-
-            // Need to check for recursive creation.
-
-            // Need to check for generics.
-
-            // Need to check for IEnumerable and multiple TImplementations.
-
-
-            throw new NotImplementedException();
+            // Register and type in the object storage
+            if (isSingleton)
+            {
+                objectContainer[tImplementation] = null;
+            }
         }
 
+
+        // TODO: add support for open-generics
         public void Register(Type tDependancy, Type tImplementation)
         {
             throw new NotImplementedException();
+        }
+
+        public DependenciesConfiguration()
+        {
+            this.lifetimeSettings = new Dictionary<Type, bool>();
+            this.objectContainer = new Dictionary<Type, object>();
+            this.dependenciesContainer = new Dictionary<Type, List<Type>>();
         }
 
 

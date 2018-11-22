@@ -46,9 +46,14 @@ namespace DIContainer
             }
         }
 
-
         public TImplementation Resolve<TImplementation>()
         {
+
+            // Need to check for recursive creation.
+            // Need to check for generics.
+
+            // Need to check for IEnumerable and multiple TImplementations.
+
             throw new NotImplementedException();
         }
     }
