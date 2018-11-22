@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DIUnitTests
 {
-    public class Class1
+    public class UnitTests
     {
+
     }
 }
