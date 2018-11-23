@@ -47,6 +47,7 @@ namespace DIContainer
             }
         }
 
+
         public TDependency Resolve<TDependency>()
         {
 
@@ -62,7 +63,6 @@ namespace DIContainer
             {
                 throw new KeyNotFoundException($"Dependency {tDependency.ToString()} is not registered.");
             }
-
         
 
             // First, check for IEnumerable to return list of registered implementations
@@ -77,11 +77,70 @@ namespace DIContainer
                 {
                     throw new ArgumentException("TDependency has more than one implementations. IEnumerable must be used.");
                 }
+
+
+
             }
-
-
 
             throw new NotImplementedException();
         }
+
+
+        // Invoke generic method
+        public object Resolve(Type t)
+        {
+            var resolveMethod = typeof(DependencyProvider).GetMethod("Resolve");
+            var resolveType = resolveMethod.MakeGenericMethod(t);
+            return resolveType.Invoke(this, null);
+        }
+
+        private object GetInstance(Type t)
+        {
+
+            // Do something with generic type
+
+
+
+            // Get object contructor with max params
+            ConstructorInfo constructor = t.GetConstructors().OrderBy(x => x.GetParameters().Length).Last();
+
+            if (constructor != null)
+            {
+                // Get and recursively create object parameters
+
+                ParameterInfo[] parameters = constructor.GetParameters();
+                object[] parameterInstances =  new object[parameters.Length];
+
+                int index = 0;
+                foreach (var param in parameters)
+                {
+
+                    Type paramType = param.ParameterType;
+
+                    // implementation for generic type parameters
+                    if (paramType.IsGenericType)
+                    {
+                        throw new NotImplementedException();
+                    } else
+                    {
+                        if (configuration.dependenciesContainer.ContainsKey(paramType))
+                        {
+                            parameterInstances[index] = Resolve(paramType);
+                        }
+                    }
+                }
+
+                var instance = constructor.Invoke(parameters);
+                return instance;
+
+            } else
+            {
+                throw new InvalidOperationException($"No public constructors available for {t}");
+            }
+
+            throw new NotImplementedException();
+        }
+
+
     }
 }

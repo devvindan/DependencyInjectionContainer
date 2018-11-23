@@ -62,6 +62,29 @@ namespace DIUnitTests
             Assert.AreEqual(dependencies.dependenciesContainer[typeof(TDependency)].Count, 1);
         }
 
+        // Check for attempts to get unregistered dependencies.
+        [TestMethod]
+        [ExpectedException(typeof(KeyNotFoundException))]
+        public void TestUnregisteredDependencies()
+        {
+            var dependencies = new DependenciesConfiguration();
+            var provider = new DependencyProvider(dependencies);
+            var obj = provider.Resolve<TDependency>();
+        }
+
+
+        // Checks for attemts to resolve TDependency with multiple registered implementations the wrong way
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestResolvingMultipleDependenciesTheWrongWay()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TImplementation>(true);
+            dependencies.Register<TDependency, TComplexImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
+            // Had to be resolved like IEnumerable<TDependency>
+            var obj = provider.Resolve<TDependency>();
+        }
 
         [TestMethod]
         public void TestRecursiveDependencies()
