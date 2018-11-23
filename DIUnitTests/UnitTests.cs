@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DIContainer;
+using DIUnitTests.ToyClasses;
 
 namespace DIUnitTests
 {
@@ -12,16 +13,41 @@ namespace DIUnitTests
     public class UnitTests
     {
 
+
         [TestInitialize]
         public void InitializeTest()
         {
 
         }
 
+        // Checks that TDependency is a reference type
         [TestMethod]
-        public void TestConfigurationValidation()
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestReferenceTypeValidation()
         {
-            
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<int, int>(true);
+            var provider = new DependencyProvider(dependencies);
+        }
+
+        // Checks that TImplementation must be inherieted/implement TException
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestImplementationInheritenceValidation()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<String, Boolean>(true);
+            var provider = new DependencyProvider(dependencies);
+        }
+
+        // Checks that TImplementation is a not abstract class
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestImplementationTypeValidation()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TAbstractImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
         }
 
         [TestMethod]
