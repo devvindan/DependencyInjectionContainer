@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace DIContainer
 {
@@ -46,13 +47,39 @@ namespace DIContainer
             }
         }
 
-        public TImplementation Resolve<TImplementation>()
+        public TDependency Resolve<TDependency>()
         {
 
             // Need to check for recursive creation.
             // Need to check for generics.
-
             // Need to check for IEnumerable and multiple TImplementations.
+
+            Type tDependency = typeof(TDependency);
+
+
+            // First, check if the dependency is registered at all
+            if (!configuration.dependenciesContainer.ContainsKey(tDependency))
+            {
+                throw new KeyNotFoundException($"Dependency {tDependency.ToString()} is not registered.");
+            }
+
+        
+
+            // First, check for IEnumerable to return list of registered implementations
+            if (tDependency.IsGenericType && tDependency.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+            {
+
+                // Generic implementation
+
+            } else
+            {
+                if (configuration.dependenciesContainer[tDependency].Count != 1)
+                {
+                    throw new ArgumentException("TDependency has more than one implementations. IEnumerable must be used.");
+                }
+            }
+
+
 
             throw new NotImplementedException();
         }

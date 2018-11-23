@@ -50,10 +50,23 @@ namespace DIUnitTests
             var provider = new DependencyProvider(dependencies);
         }
 
+        // Checks that the same TImplementations are not registered twice
+        [TestMethod]
+        public void TestDuplicateImplementations()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TImplementation>(true);
+            dependencies.Register<TDependency, TImplementation>(true);
+            var provider = new DependencyProvider(dependencies);          
+
+            Assert.AreEqual(dependencies.dependenciesContainer[typeof(TDependency)].Count, 1);
+        }
+
+
         [TestMethod]
         public void TestRecursiveDependencies()
         {
-
+            
         }
 
         [TestMethod]

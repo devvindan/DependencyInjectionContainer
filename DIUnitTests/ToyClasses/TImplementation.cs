@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace DIUnitTests
 {
-    class TImplementation
+    public class TImplementation : TDependency
     {
+
+        public override void DoNothing()
+        {
+            // Do nothing. Really.
+        }
+
     }
 }
