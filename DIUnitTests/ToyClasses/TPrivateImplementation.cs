@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace DIUnitTests.ToyClasses
 {
-    public class TComplexImplementation : TDependency
+    public class TPrivateImplementation : TDependency
     {
         public override void DoNothing()
         {
-            // There's nothing here, but what here's mine.
+            // There's nothing here, but what here's mine
         }
+
+        private TPrivateImplementation()
+        {
+            // You can watch, but you can't touch.
+        }
+
     }
 }

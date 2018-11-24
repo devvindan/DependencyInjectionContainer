@@ -47,52 +47,50 @@ namespace DIContainer
             }
         }
 
-
-        public TDependency Resolve<TDependency>()
+        public List<TDependency> Resolve<TDependency>()
         {
 
-            // Need to check for recursive creation.
             // Need to check for generics.
-            // Need to check for IEnumerable and multiple TImplementations.
 
+            // For interface simplicity, IEnumerable is handled the same as basic resolve.
+            // Methods returns List of registered implementations regardless of their amount
             Type tDependency = typeof(TDependency);
-
+            if (tDependency.IsGenericType && tDependency.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+            {
+                tDependency = tDependency.GenericTypeArguments[0];
+            }
 
             // First, check if the dependency is registered at all
             if (!configuration.dependenciesContainer.ContainsKey(tDependency))
             {
                 throw new KeyNotFoundException($"Dependency {tDependency.ToString()} is not registered.");
             }
-        
 
-            // First, check for IEnumerable to return list of registered implementations
-            if (tDependency.IsGenericType && tDependency.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+            List<TDependency> result = new List<TDependency>();
+
+            foreach(var implementation in configuration.dependenciesContainer[tDependency])
             {
-
-                // Implementation for IEnumerable
-                throw new NotImplementedException();
-
-            } else
-            {
-                // check if incorrect resolving interface is used
-                if (configuration.dependenciesContainer[tDependency].Count != 1)
-                {
-                    throw new ArgumentException("TDependency has more than one implementations. IEnumerable must be used.");
-                }
-
-                return (TDependency)GetInstance(configuration.dependenciesContainer[tDependency][0]);
-
+                result.Add((TDependency)GetInstance(implementation));
             }
+
+            return result;
 
         }
 
-
-        // Invoke generic method
+        // Invoke generic method.
         public object Resolve(Type t)
         {
             var resolveMethod = typeof(DependencyProvider).GetMethod("Resolve");
             var resolveType = resolveMethod.MakeGenericMethod(t);
-            return resolveType.Invoke(this, null);
+
+            var resolved =  resolveType.Invoke(this, null) as List<object>;
+            if (resolved.Count > 1)
+            {
+                return resolved;
+            } else
+            {
+                return resolved[0];
+            }
         }
 
         private object GetInstance(Type t)
@@ -117,12 +115,19 @@ namespace DIContainer
 
                     Type paramType = param.ParameterType;
 
-                    // implementation for generic type parameters
+                    // Process IEnumerables equally.
+                    if (paramType.IsGenericType && paramType.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+                    {
+                        paramType = paramType.GenericTypeArguments[0];
+                    }
+
+                    // Implementation for generic type parameters (Not IEnums)
                     if (paramType.IsGenericType)
                     {
                         throw new NotImplementedException();
                     } else
                     {
+                        // Recursively create dependencies
                         if (configuration.dependenciesContainer.ContainsKey(paramType))
                         {
                             parameterInstances[index] = Resolve(paramType);

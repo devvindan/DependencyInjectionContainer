@@ -9,9 +9,11 @@ namespace DIUnitTests
     public class TImplementation : TDependency
     {
 
+        int uselessField = 0;
+
         public override void DoNothing()
         {
-            // Do nothing. Really.
+            // There's nothing here, but what here's mine.
         }
 
     }

@@ -72,30 +72,45 @@ namespace DIUnitTests
             var obj = provider.Resolve<TDependency>();
         }
 
-
-        // Checks for attemts to resolve TDependency with multiple registered implementations the wrong way
+        // Simple check for resolving basic implementation.
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestResolvingMultipleDependenciesTheWrongWay()
+        public void TestResolvingBasicImplementation()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
+            var obj = provider.Resolve<TDependency>();
+            Assert.IsInstanceOfType(obj[0], typeof(TImplementation));
+        }
+
+        // Checks for for resolving dependencies with multiple implementations
+        [TestMethod]
+        public void TestResolvingMultipleImplementations()
         {
             var dependencies = new DependenciesConfiguration();
             dependencies.Register<TDependency, TImplementation>(true);
             dependencies.Register<TDependency, TComplexImplementation>(true);
             var provider = new DependencyProvider(dependencies);
-            // Had to be resolved like IEnumerable<TDependency>
+            var resolved = provider.Resolve<TDependency>();
+            Assert.AreEqual(resolved.Count, 2);
+
+            Type[] actual = new Type[] { resolved[0].GetType(), resolved[1].GetType() };
+            Type[] expected = new Type[] { typeof(TComplexImplementation), typeof(TImplementation) };
+
+            CollectionAssert.AreEquivalent(actual, expected);
+        }
+
+        // Check for resolving dependencies that can't be created.
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestResolvingUncreatableDependencies()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TPrivateImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
             var obj = provider.Resolve<TDependency>();
         }
 
-        // Simple check for resolving basic dependency.
-        [TestMethod]
-        public void TestResolvingBasicDependency()
-        {
-            var dependencies = new DependenciesConfiguration();
-            dependencies.Register<TDependency, TImplementation>(true);
-            var provider = new DependencyProvider(dependencies);
-            var obj = provider.Resolve<TDependency>();
-            Assert.IsInstanceOfType(obj, typeof(TImplementation));
-        }
 
         [TestMethod]
         public void TestRecursiveDependencies()

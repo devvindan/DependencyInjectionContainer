@@ -45,6 +45,7 @@
     <Compile Include="ToyClasses\TComplexImplementation.cs" />
     <Compile Include="ToyClasses\TImplementation.cs" />
     <Compile Include="ToyClasses\TDependency.cs" />
+    <Compile Include="ToyClasses\TPrivateImplementation.cs" />
     <Compile Include="UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
