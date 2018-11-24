@@ -86,6 +86,17 @@ namespace DIUnitTests
             var obj = provider.Resolve<TDependency>();
         }
 
+        // Simple check for resolving basic dependency.
+        [TestMethod]
+        public void TestResolvingBasicDependency()
+        {
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
+            var obj = provider.Resolve<TDependency>();
+            Assert.IsInstanceOfType(obj, typeof(TImplementation));
+        }
+
         [TestMethod]
         public void TestRecursiveDependencies()
         {

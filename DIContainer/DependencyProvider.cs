@@ -69,20 +69,21 @@ namespace DIContainer
             if (tDependency.IsGenericType && tDependency.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
             {
 
-                // Generic implementation
+                // Implementation for IEnumerable
+                throw new NotImplementedException();
 
             } else
             {
+                // check if incorrect resolving interface is used
                 if (configuration.dependenciesContainer[tDependency].Count != 1)
                 {
                     throw new ArgumentException("TDependency has more than one implementations. IEnumerable must be used.");
                 }
 
-
+                return (TDependency)GetInstance(configuration.dependenciesContainer[tDependency][0]);
 
             }
 
-            throw new NotImplementedException();
         }
 
 
@@ -98,7 +99,6 @@ namespace DIContainer
         {
 
             // Do something with generic type
-
 
 
             // Get object contructor with max params
@@ -130,15 +130,14 @@ namespace DIContainer
                     }
                 }
 
-                var instance = constructor.Invoke(parameters);
+                var instance = constructor.Invoke(parameterInstances);
                 return instance;
 
             } else
             {
                 throw new InvalidOperationException($"No public constructors available for {t}");
             }
-
-            throw new NotImplementedException();
+            
         }
 
 
