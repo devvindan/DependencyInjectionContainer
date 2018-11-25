@@ -11,7 +11,6 @@ namespace DIContainer
     {
 
         DependenciesConfiguration configuration;
-        private object syncRoot = new object();
 
         public DependencyProvider(DependenciesConfiguration configuration)
         {
@@ -78,18 +77,18 @@ namespace DIContainer
                 // Check if singleton
                 if (configuration.lifetimeSettings[implementation])
                 {
-                    if (configuration.objectContainer[implementation] == null)
+                    if (configuration.objectContainer[implementation].instance == null)
                     {
-                        lock (syncRoot)
+                        lock (configuration.objectContainer[implementation].syncRoot)
                         {
-                            if (configuration.objectContainer[implementation] == null)
+                            if (configuration.objectContainer[implementation].instance == null)
                             {
-                                configuration.objectContainer[implementation] = GetInstance(implementation);
+                                configuration.objectContainer[implementation].instance = GetInstance(implementation);
                             }
                         }
                     }
 
-                    resolved = (TDependency)configuration.objectContainer[implementation];
+                    resolved = (TDependency)configuration.objectContainer[implementation].instance;
 
                 } else
                 {

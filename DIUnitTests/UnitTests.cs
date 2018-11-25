@@ -154,19 +154,18 @@ namespace DIUnitTests
             var fourthObject = provider.Resolve<IAnimal>()[0];
 
             Assert.AreNotSame(thirdObject, fourthObject);
-
         }
 
-        [TestMethod]
-        public void TestMultipleImplementations()
-        {
-            
-        }
-
+        // Test registering and resolving of generic dependencies
         [TestMethod]
         public void TestGenericDependencies()
         {
-
+            /*
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register(typeof(IService<>), typeof(ServiceImpl<>), true);
+            dependencies.Register<TDependency, TImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
+            */
         }
 
     }

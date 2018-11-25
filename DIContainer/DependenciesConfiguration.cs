@@ -15,7 +15,7 @@ namespace DIContainer
         public Dictionary<Type, bool> lifetimeSettings;
 
         // Dictionary to story created objects for sigletone types
-        public Dictionary<Type, Object> objectContainer;
+        public Dictionary<Type, SingletonContainer> objectContainer;
 
         // Dictionary to map Abstracy Dependency to Concrete Implementation(s)
         public Dictionary<Type, List<Type>> dependenciesContainer;
@@ -46,13 +46,11 @@ namespace DIContainer
             // Register and type in the object storage
             if (isSingleton)
             {
-                objectContainer[tImplementation] = null;
+                objectContainer[tImplementation] = new SingletonContainer();
             }
         }
 
-
-        // TODO: add support for open-generics
-        public void Register(Type tDependancy, Type tImplementation)
+        public void Register(Type tDependancy, Type tImplementation, bool IsSingleton)
         {
             throw new NotImplementedException();
         }
@@ -60,7 +58,7 @@ namespace DIContainer
         public DependenciesConfiguration()
         {
             this.lifetimeSettings = new Dictionary<Type, bool>();
-            this.objectContainer = new Dictionary<Type, object>();
+            this.objectContainer = new Dictionary<Type, SingletonContainer>();
             this.dependenciesContainer = new Dictionary<Type, List<Type>>();
         }
 

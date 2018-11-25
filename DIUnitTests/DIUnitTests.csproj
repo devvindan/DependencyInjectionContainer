@@ -45,7 +45,9 @@
     <Compile Include="ToyClasses\Car.cs" />
     <Compile Include="ToyClasses\Dog.cs" />
     <Compile Include="ToyClasses\IAnimal.cs" />
+    <Compile Include="ToyClasses\IService.cs" />
     <Compile Include="ToyClasses\IVehicle.cs" />
+    <Compile Include="ToyClasses\ServiceImpl.cs" />
     <Compile Include="ToyClasses\TAbstractImplementation.cs" />
     <Compile Include="ToyClasses\TComplexImplementation.cs" />
     <Compile Include="ToyClasses\TImplementation.cs" />
