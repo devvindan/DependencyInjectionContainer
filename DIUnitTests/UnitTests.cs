@@ -157,15 +157,33 @@ namespace DIUnitTests
         }
 
         // Test registering and resolving of generic dependencies
-        [TestMethod]
+        [TestMethod]    
         public void TestGenericDependencies()
         {
-            /*
+            
             var dependencies = new DependenciesConfiguration();
-            dependencies.Register(typeof(IService<>), typeof(ServiceImpl<>), true);
+            dependencies.Register<IService<TDependency>, ServiceImpl<TDependency>>(true);
             dependencies.Register<TDependency, TImplementation>(true);
             var provider = new DependencyProvider(dependencies);
-            */
+
+            var genericObject = (ServiceImpl<TDependency>) provider.Resolve<IService<TDependency>>()[0];
+
+            Assert.AreEqual(genericObject.repository.GetType(), typeof(TImplementation));
+        }
+
+        // Test registering and resolving with open generics
+        [TestMethod]
+        public void TestOpenGenericDependencies()
+        {
+
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register(typeof(IService<>), typeof(ServiceImpl<>));
+            dependencies.Register<TDependency, TImplementation>(true);
+            var provider = new DependencyProvider(dependencies);
+
+            var genericObject = (ServiceImpl<TDependency>)provider.Resolve<IService<TDependency>>()[0];
+
+            Assert.AreEqual(genericObject.repository.GetType(), typeof(TImplementation));
         }
 
     }

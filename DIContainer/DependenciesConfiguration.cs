@@ -50,9 +50,22 @@ namespace DIContainer
             }
         }
 
-        public void Register(Type tDependancy, Type tImplementation, bool IsSingleton)
+        public void Register(Type tDependency, Type tImplementation)
         {
-            throw new NotImplementedException();
+            if (!dependenciesContainer.ContainsKey(tDependency))
+            {
+                dependenciesContainer[tDependency] = new List<Type>();
+                dependenciesContainer[tDependency].Add(tImplementation);
+            }
+            else
+            {
+                // Implementations in array must be unique
+                if (!dependenciesContainer[tDependency].Contains(tImplementation))
+                {
+                    dependenciesContainer[tDependency].Add(tImplementation);
+                }
+            }
+
         }
 
         public DependenciesConfiguration()

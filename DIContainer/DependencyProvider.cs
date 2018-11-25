@@ -33,7 +33,7 @@ namespace DIContainer
                 foreach (Type tImplementation in configuration.dependenciesContainer[tDependency])
                 {
                     // Checks if TImplementation inherits from/implements TDependency
-                    if (!tDependency.IsAssignableFrom(tImplementation))
+                    if (!tDependency.IsAssignableFrom(tImplementation) && !tDependency.IsGenericTypeDefinition)
                     {
                         throw new ArgumentException("TImplementation must be inherited from/implement Dependency type.");
                     }
@@ -60,7 +60,17 @@ namespace DIContainer
                 tDependency = tDependency.GenericTypeArguments[0];
             }
 
-            // First, check if the dependency is registered at all
+            // Generic type arguments availability check
+            if (tDependency.IsGenericType)
+            {
+                foreach (var type in tDependency.GenericTypeArguments)
+                {
+                    if (!configuration.dependenciesContainer.ContainsKey(type))
+                    {
+                        throw new KeyNotFoundException($"Dependency {type.ToString()} is not registered.");
+                    }
+                }
+            } else 
             if (!configuration.dependenciesContainer.ContainsKey(tDependency))
             {
                 throw new KeyNotFoundException($"Dependency {tDependency.ToString()} is not registered.");
@@ -68,7 +78,28 @@ namespace DIContainer
 
             List<TDependency> result = new List<TDependency>();
 
-            foreach(var implementation in configuration.dependenciesContainer[tDependency])
+            // Open generics processing
+            if (tDependency.IsGenericType && configuration.dependenciesContainer.ContainsKey(tDependency.GetGenericTypeDefinition()))
+            {   
+
+                var implementations = configuration.dependenciesContainer[tDependency.GetGenericTypeDefinition()];
+                foreach(var implementation in implementations)
+                {
+                    var genericType = implementation.MakeGenericType(tDependency.GetGenericArguments());
+                    var resolved = (TDependency)GetInstance(genericType);
+                    result.Add(resolved);
+                }
+
+                return result;
+
+            }
+            else
+            if (!configuration.dependenciesContainer.ContainsKey(tDependency))
+            {
+                throw new KeyNotFoundException($"Dependency {tDependency.ToString()} is not registered.");
+            }
+
+            foreach (var implementation in configuration.dependenciesContainer[tDependency])
             {
 
                 TDependency resolved;

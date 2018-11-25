@@ -9,7 +9,7 @@ namespace DIUnitTests.ToyClasses
     class ServiceImpl<TRepository> : IService<TRepository> where TRepository : TDependency
     {
 
-        TRepository repository;
+        public TRepository repository;
 
         public void DoWhatYouAreBestAt(TRepository repository)
         {
