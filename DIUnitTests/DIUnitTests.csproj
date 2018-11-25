@@ -41,6 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ToyClasses\Bike.cs" />
+    <Compile Include="ToyClasses\Car.cs" />
+    <Compile Include="ToyClasses\Dog.cs" />
+    <Compile Include="ToyClasses\IAnimal.cs" />
+    <Compile Include="ToyClasses\IVehicle.cs" />
     <Compile Include="ToyClasses\TAbstractImplementation.cs" />
     <Compile Include="ToyClasses\TComplexImplementation.cs" />
     <Compile Include="ToyClasses\TImplementation.cs" />

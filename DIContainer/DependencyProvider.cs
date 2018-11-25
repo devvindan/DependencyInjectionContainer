@@ -77,13 +77,17 @@ namespace DIContainer
 
         }
 
-        // Invoke generic method.
-        public object Resolve(Type t)
+        // Resolve for creating inner dependencies using reflection.
+        public object ResolveFromType(Type t)
         {
             var resolveMethod = typeof(DependencyProvider).GetMethod("Resolve");
             var resolveType = resolveMethod.MakeGenericMethod(t);
 
-            var resolved =  resolveType.Invoke(this, null) as List<object>;
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType(t);
+
+            dynamic resolved = Convert.ChangeType(resolveType.Invoke(this, null), constructedListType);
+            
             if (resolved.Count > 1)
             {
                 return resolved;
@@ -130,9 +134,11 @@ namespace DIContainer
                         // Recursively create dependencies
                         if (configuration.dependenciesContainer.ContainsKey(paramType))
                         {
-                            parameterInstances[index] = Resolve(paramType);
+                            parameterInstances[index] = ResolveFromType(paramType);
                         }
                     }
+
+                    index++;
                 }
 
                 var instance = constructor.Invoke(parameterInstances);

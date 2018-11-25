@@ -115,7 +115,25 @@ namespace DIUnitTests
         [TestMethod]
         public void TestRecursiveDependencies()
         {
-            
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TComplexImplementation>(true);
+            dependencies.Register<IAnimal, Dog>(true);
+            dependencies.Register<IVehicle, Car>(true);
+            dependencies.Register<IVehicle, Bike>(true);
+            var provider = new DependencyProvider(dependencies);
+
+            var complexImplementation = (TComplexImplementation) provider.Resolve<TDependency>()[0];
+
+
+            // Check that IEnumerable<IVehicle> dependencies are created.
+            Type[] actual = new Type[] { complexImplementation.vehicles[0].GetType(), complexImplementation.vehicles[1].GetType() };
+            Type[] expected = new Type[] { typeof(Car), typeof(Bike) };
+
+            CollectionAssert.AreEquivalent(actual, expected);
+
+            // Check that IAnimal dependency is created.
+            Assert.AreEqual(typeof(Dog), complexImplementation.animal.GetType());
+
         }
 
         [TestMethod]
