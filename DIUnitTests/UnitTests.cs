@@ -136,10 +136,24 @@ namespace DIUnitTests
 
         }
 
+        // Test singleton lifestyle-parameter
         [TestMethod]
         public void TestSingletonDependencies()
         {
-            // must be multithreading-protected
+            var dependencies = new DependenciesConfiguration();
+            dependencies.Register<TDependency, TImplementation>(true);
+            dependencies.Register<IAnimal, Dog>(false);
+            var provider = new DependencyProvider(dependencies);
+
+            var firstObject = provider.Resolve<TDependency>()[0];
+            var secondObject = provider.Resolve<TDependency>()[0];
+
+            Assert.AreSame(firstObject, secondObject);
+
+            var thirdObject = provider.Resolve<IAnimal>()[0];
+            var fourthObject = provider.Resolve<IAnimal>()[0];
+
+            Assert.AreNotSame(thirdObject, fourthObject);
 
         }
 

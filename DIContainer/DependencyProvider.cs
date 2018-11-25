@@ -11,6 +11,7 @@ namespace DIContainer
     {
 
         DependenciesConfiguration configuration;
+        private object syncRoot = new object();
 
         public DependencyProvider(DependenciesConfiguration configuration)
         {
@@ -70,7 +71,32 @@ namespace DIContainer
 
             foreach(var implementation in configuration.dependenciesContainer[tDependency])
             {
-                result.Add((TDependency)GetInstance(implementation));
+
+                TDependency resolved;
+
+                // Implementing multithreading-protected singleton
+                // Check if singleton
+                if (configuration.lifetimeSettings[implementation])
+                {
+                    if (configuration.objectContainer[implementation] == null)
+                    {
+                        lock (syncRoot)
+                        {
+                            if (configuration.objectContainer[implementation] == null)
+                            {
+                                configuration.objectContainer[implementation] = GetInstance(implementation);
+                            }
+                        }
+                    }
+
+                    resolved = (TDependency)configuration.objectContainer[implementation];
+
+                } else
+                {
+                    resolved = (TDependency)GetInstance(implementation);
+                }
+
+                result.Add(resolved);
             }
 
             return result;
